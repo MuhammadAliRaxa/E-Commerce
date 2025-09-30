@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "315386810591",
+    "project_id": "e-commerce-app-76cb3",
+    "storage_bucket": "e-commerce-app-76cb3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315386810591:android:afd01b052e6487218ad96a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_e_commerce_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACNWZW0S1SkJsX1ONHgkFm1lXyrfxJOWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "315386810591-7ic9ma7fjvlkns6mo5n1kfovmrhav41h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sixamtech.sixValley"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315386810591:android:8405411d825f95328ad96a",
+        "android_client_info": {
+          "package_name": "com.sixamtech.flutter_sixvalley_ecommerce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACNWZW0S1SkJsX1ONHgkFm1lXyrfxJOWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "315386810591-7ic9ma7fjvlkns6mo5n1kfovmrhav41h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sixamtech.sixValley"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
