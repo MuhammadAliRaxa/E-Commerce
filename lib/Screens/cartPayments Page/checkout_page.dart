@@ -15,6 +15,7 @@ import 'package:flutter_e_commerce_app/data/models/my_order.dart';
 import 'package:flutter_e_commerce_app/data/models/shipping_address.dart';
 import 'package:flutter_e_commerce_app/data/repoositries/product_repositry.dart';
 import 'package:flutter_e_commerce_app/stripe_payment/payment_services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 
 class CheckoutScreen extends StatelessWidget {
@@ -467,12 +468,19 @@ Widget build(BuildContext context) {
         height: 50,
         child: ElevatedButton(
           onPressed: () async{
-            String address=SharedpreferancesHelper.getAddress()!;
+            
             if(SharedpreferancesHelper.getAddress()!=null){
             try {
+              String address=SharedpreferancesHelper.getAddress()!;
             await payment.initPaymentSheet(ammount: '${total.round()}', merchantName: "Muhammad Ali Raza", currency: "usd");
             await payment.presentPaymentSheet();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Payment Sucessfull")));
+            Fluttertoast.showToast(msg: "Payment Successful ! ",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
             MyOrder order=MyOrder(isPending: "Ongoing", address: address, items: cartItems);
             ProductRepositry productRepositry=ProductRepositry();
             await productRepositry.addProductInOder(order);
@@ -480,10 +488,22 @@ Widget build(BuildContext context) {
             context.read<CartBloc>().add(FetchCartProduct());
            }catch (e) {
             print(e.toString());
-             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Payment Cancelled")));
+             Fluttertoast.showToast(msg: "Payment Cancelled !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
            }
             }else{
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Address is not added !")));
+              Fluttertoast.showToast(msg: "Address not Added !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
             }
           },
           style: ElevatedButton.styleFrom(

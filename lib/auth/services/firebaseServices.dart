@@ -1,22 +1,24 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_e_commerce_app/Configs/sharedPreferances.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_e_commerce_app/auth/models/userModel.dart';
 import 'package:flutter_e_commerce_app/data/models/cart_product.dart';
 import 'package:flutter_e_commerce_app/data/models/my_order.dart';
+import 'package:http/http.dart' as http;
 class Firebaseservices {
   final FirebaseFirestore _firestore =FirebaseFirestore.instance;
   final FirebaseStorage _storage=FirebaseStorage.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final GoogleSignIn _googleSignIn=GoogleSignIn.instance;
   final String orderCollection="order";
+  bool _initialized=false;
   static String customersCollection="customers";
   static String cartCollection="cart";
-
-
 
   Future<UserModel?> getCurrentUser()async {
     final user=_auth.currentUser;
@@ -61,8 +63,8 @@ class Firebaseservices {
      required UserModel user
     }
   )async{
-    // File file=File(user.profilePicture);
-    // String _image=await uploadProfileImage(user.id,file);
+    File file=File(user.profilePicture);
+    String _image=await uploadProfileImage(user.id,file);
     try {
       final doc = await _firestore
           .collection(customersCollection).doc(user.id)
@@ -74,7 +76,7 @@ class Firebaseservices {
             'phoneNumber':user.phoneNumber,
             'gender':user.gender,
             'dateofBirth':user.dateofBirth,
-            'profilePicture':user.profilePicture,
+            'profilePicture':_image??"",
             'password':user.password
     });
       return null;
@@ -85,10 +87,17 @@ class Firebaseservices {
 
 
   Future<String> uploadProfileImage(String uid, File imageFile) async {
-    Reference ref = _storage.ref().child('profile_images').child('$uid.jpg');
-    UploadTask uploadTask = ref.putFile(imageFile);
-    TaskSnapshot snapshot = await uploadTask;
-    return await snapshot.ref.getDownloadURL();
+    final bytes = await File(imageFile.path).readAsBytes();
+    final base64Image = base64Encode(bytes);
+
+    final url = Uri.parse("https://api.imgbb.com/1/upload?key=e0111b8705efa639ceb3e8761a81a03b");
+
+    final response = await http.post(url, body: {
+      "image": base64Image,
+    });
+
+    final data = jsonDecode(response.body);
+    return data['data']['url'];
   } 
 
 
@@ -163,6 +172,7 @@ class Firebaseservices {
       throw Exception("User is Not Authenticated");
     }
     try {
+      SharedpreferancesHelper.setAccountAlreadyLogin(false);
       await _googleSignIn.signOut();
       await _auth.signOut();
     return true;
@@ -194,9 +204,6 @@ class Firebaseservices {
     }
   }
 
-
-
-
   Future<String> addtoOrder(MyOrder order)async{
     UserModel? user=await getCurrentUser();
     if(user==null){
@@ -211,21 +218,96 @@ class Firebaseservices {
     return "done";
   }
 
+  // 🔹 1. Initialize SignIn
+  Future<void> initialize() async {
+    if (!_initialized) {
+      await _googleSignIn.initialize(
+        clientId:
+            "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com", // <-- your web client ID
+        serverClientId:
+            "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
+      );
+      _initialized = true;
+    }
+  }
+
+  // 🔹 2. Sign in with Google and Firebase
   Future<UserCredential?> signInWithGoogle() async {
-  // Trigger the authentication flow
-  await _googleSignIn.initialize();
-  final GoogleSignInAccount? googleUser = await _googleSignIn.authenticate();
+    try {
+      await initialize();
 
-  // Obtain the auth details from the request
-  final GoogleSignInAuthentication googleAuth = googleUser!.authentication;
+      // Authenticate with Google (new API)
+      final GoogleSignInAccount googleUser =
+          await _googleSignIn.authenticate(scopeHint: ['email', 'profile']);
 
-  // Create a new credential
-  final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
+      if(googleUser==null){
+        return null;
+      }    
 
-  // Once signed in, return the UserCredential
-  return await FirebaseAuth.instance.signInWithCredential(credential);
-}
+      // Get tokens
+      final googleAuth = await googleUser.authentication;
+      final idToken = googleAuth.idToken;
 
+      // Get access token using authorization client
+      final authorizationClient = googleUser.authorizationClient;
+      final authorization = await authorizationClient.authorizationForScopes([
+        'email',
+        'profile',
+      ]);
+
+      final accessToken = authorization?.accessToken;
+      if (accessToken == null || idToken == null) {
+        throw FirebaseAuthException(
+          code: 'MISSING_TOKENS',
+          message: 'Missing Google ID token or access token.',
+        );
+      }
+
+      // Create Firebase credential
+      final credential = GoogleAuthProvider.credential(
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+
+      // Sign in with Firebase
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      final user = userCredential.user;
+
+      // Save new users to Firestore
+      if (user != null) {
+        final userDoc =
+            FirebaseFirestore.instance.collection(customersCollection).doc(user.uid);
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          await userDoc.set({
+            'id': user.uid,
+            'name': user.displayName ?? '',
+            'email': user.email ?? '',
+            'profilePicture': user.photoURL ?? '',
+            'phoneNumber': user.phoneNumber ??'',
+            'gender': '',
+            'dateofBirth': "",
+            'password': "",
+            'nickName': user.displayName??'',
+          });
+        }
+      }
+
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      print('FirebaseAuth Error: ${e.code}');
+      rethrow;
+    } on GoogleSignInException catch (e) {
+      print('Google Sign-In Error: ${e.code} - ${e.description}');
+      rethrow;
+    } catch (e) {
+      print('Unknown error: $e');
+      rethrow;
+    }
+  }
+  
 
   Future<void> deleteCollection(String collectionPath) async {
     UserModel? user=await getCurrentUser();

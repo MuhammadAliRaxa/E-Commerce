@@ -12,6 +12,7 @@ import 'package:flutter_e_commerce_app/Screens/SplashScreen/splash_screen.dart';
 import 'package:flutter_e_commerce_app/Configs/sharedPreferances.dart';
 import 'package:flutter_e_commerce_app/bloc/shipping%20address/shipping_address_bloc.dart';
 import 'package:flutter_e_commerce_app/bloc/user%20profile/user_profile_bloc.dart';
+import 'package:flutter_e_commerce_app/widget/custom_parent_widget.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:hive_flutter/adapters.dart';
 
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         ),
-        home: SplashScreen(),
+        home: CustomParentWidget(child: SplashScreen()),
       ),
     );
   }

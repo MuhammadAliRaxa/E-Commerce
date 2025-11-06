@@ -82,8 +82,8 @@ class LoadedWidget extends StatelessWidget {
                                 child: Column(
                                   
                                   children: [
-                                    Expanded(flex: 5,child: Align(alignment: Alignment.centerLeft,child: Text("total Price",style: TextStyle(fontSize: 18,color: Colors.black26),))),
-                                    Expanded(flex: 5,child: Text("Rs.${state.total}.00",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),))
+                                    Expanded(flex: 5,child: Align(alignment: Alignment.center,child: Text("Total Price",style: TextStyle(fontSize: 18,color: Colors.black26),))),
+                                    Expanded(flex: 5,child: Align(alignment: Alignment.center,child: Text("Rs.${state.total}.00",style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold),)))
                                   ],
                                 ),
                               ),

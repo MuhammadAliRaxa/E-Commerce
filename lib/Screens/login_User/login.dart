@@ -4,6 +4,7 @@ import 'package:flutter_e_commerce_app/Screens/HomePage/home_page.dart';
 import 'package:flutter_e_commerce_app/Screens/createAccountPage/create_account.dart';
 import 'package:flutter_e_commerce_app/auth/services/firebaseServices.dart';
 import 'package:flutter_e_commerce_app/configs/sharedPreferances.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginPage extends StatefulWidget{
   const LoginPage({super.key});
@@ -84,13 +85,33 @@ class _LoginScreemState extends State<LoginPage> {
                               final response=await _firebaseservices.signInWithEmail(email: emailController.text, password: passwordController.text);
                               if(response==''){
                                 await SharedpreferancesHelper.setAccountAlreadyLogin(true);
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Login Successfully")));
+                                Fluttertoast.showToast(msg: "Login Successfully",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.CENTER,
+                                fontSize: 16
+                                );
                                 Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage(), ));
                               }else{
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response)));
+                                Fluttertoast.showToast(msg: response,
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
                               } 
                             }else{
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please give Correct format of Gmail and Password")));
+                              Fluttertoast.showToast(
+        msg: "Please give Correct format of Gmail and Password",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
                             }
                           },
                           style: ButtonStyle(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.black54,)),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_e_commerce_app/Screens/HomePage/home_page.dart';
 import 'package:flutter_e_commerce_app/auth/models/userModel.dart';
 import 'package:flutter_e_commerce_app/auth/services/firebaseServices.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -19,7 +20,7 @@ class ProfilePage extends StatefulWidget{
 
 class _ProfilePageState extends State<ProfilePage> {
   Firebaseservices _firebaseservices=Firebaseservices();
-  File _image=File("");
+  File? _image;
   final dateofBirth=TextEditingController();
   DateTime? selectedDate;
   String selectedGender="gender";
@@ -44,7 +45,13 @@ class _ProfilePageState extends State<ProfilePage> {
       _image=File(imagePick.path);
     });
       }else{
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("image Not selected")));
+        Fluttertoast.showToast(msg: "Image not selected !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
       }
     }
   }
@@ -75,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           getImagefromGallery();
                         },
                         child: CircleAvatar(
-                          radius: 100,
+                          radius: 70,
                           backgroundImage: _image==null?AssetImage("assets/profile.png"):FileImage(_image!)
                         ),
                       ),
@@ -191,7 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 55,
                       child: ElevatedButton(style: ButtonStyle(backgroundColor: WidgetStateColor.resolveWith((states) => Colors.black54,)),onPressed: ()async{
                         if(_formKey.currentState!.validate()){
-                          final user=UserModel(id: widget.uid, name: full_name.text, nickName: nick_name.text, dateofBirth: dateofBirth.text, email: widget.email, password: widget.password, phoneNumber: phone.text, gender: selectedGender, profilePicture: _image.path);
+                          final user=UserModel(id: widget.uid, name: full_name.text, nickName: nick_name.text, dateofBirth: dateofBirth.text, email: widget.email, password: widget.password, phoneNumber: phone.text, gender: selectedGender, profilePicture: _image==null?"no Image":_image!.path);
                           _firebaseservices.createUserProfile(user:user);
                           showDialog(context: context, builder: (context) => Dialog(elevation: 30,
                             child: Container(
@@ -204,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Column(
                                 children: [
                                   Expanded(flex:3,child: Center(child: Image(fit: BoxFit.cover, image: AssetImage("assets/readyAccount.png")))),
-                                  Expanded(flex: 4,child: Text("Congratulations!",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),)),
+                                  Expanded(flex: 3,child: Text("Congratulations!",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),)),
                                   Expanded(flex: 3,child: SizedBox(width: 200,child: Text('Your account is ready to use. You will be redirected to Home Page in few seconds.')))
                                 ],
                               ),

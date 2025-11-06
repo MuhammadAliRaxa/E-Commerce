@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyACNWZW0S1SkJsX1ONHgkFm1lXyrfxJOWw',
-    appId: '1:315386810591:android:afd01b052e6487218ad96a',
+    appId: '1:315386810591:android:2d8424b20642b8118ad96a',
     messagingSenderId: '315386810591',
     projectId: 'e-commerce-app-76cb3',
     storageBucket: 'e-commerce-app-76cb3.firebasestorage.app',
@@ -59,11 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyATI2pPkKpiFOcirF239DYfGHQDLyy_Gbc',
-    appId: '1:315386810591:ios:27c0fe8808873c908ad96a',
+    appId: '1:315386810591:ios:a44a978ba4c014cb8ad96a',
     messagingSenderId: '315386810591',
     projectId: 'e-commerce-app-76cb3',
     storageBucket: 'e-commerce-app-76cb3.firebasestorage.app',
-    iosBundleId: 'com.example.flutterECommerceApp',
+    iosClientId: '315386810591-3gvnmvfecvdb4bn3jvk1dboodedgvpcs.apps.googleusercontent.com',
+    iosBundleId: 'com.ecommerce.ecomapp',
   );
 
 }

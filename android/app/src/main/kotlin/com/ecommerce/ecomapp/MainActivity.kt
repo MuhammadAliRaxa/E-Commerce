@@ -1,4 +1,4 @@
-package com.example.flutter_e_commerce_app
+package com.ecommerce.ecomapp
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity

@@ -58,15 +58,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.more_horiz,
-              color: Colors.black,
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [

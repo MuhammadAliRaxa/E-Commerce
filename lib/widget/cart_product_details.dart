@@ -83,24 +83,13 @@ class CartProductDetails extends StatelessWidget {
                               children: [
                                 Expanded(flex: 5,child: Text("Rs.${product.price}",)),
                                 Expanded(
-                                  flex: 4,
-                                  child: Container(width: 70,height: 30,
+                                  flex: 2,
+                                  child: Container(width: 30,height: 30,
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30)
+                                        borderRadius: BorderRadius.circular(10)
                                         ,color: const Color.fromARGB(232, 190, 187, 179),
                                       ),
-                                      child: Row(
-                                        children: [
-                                           Expanded(flex: 2,child: TextButton(onPressed: (){
-                                            //context.read<QuantityBloc>().add(const DecreamentQuantityEvent());
-                                           }, child: Text('-',style: TextStyle(fontSize: 10,)))),
-                                           Expanded(flex: 2,child: Align(alignment: Alignment.center,child: Text(product.quantity.toString(),style: GoogleFonts.anta(fontSize: 8),))),
-                                           Expanded(flex: 2,child: TextButton(onPressed: (){
-                                              //context.read<QuantityBloc>().add(IncreamentQantityEvent());
-                                              product.quantity=state.count;
-                                           }, child: Text("+",style: TextStyle(fontSize: 10),)))
-                                        ],
-                                      ),),
+                                      child: Align(alignment: Alignment.center,child: Text(product.quantity.toString(),style: GoogleFonts.anta(fontSize: 15),)),),
                                 )
                               ],
                             ),

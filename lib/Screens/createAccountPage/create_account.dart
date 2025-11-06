@@ -8,6 +8,7 @@ import 'package:flutter_e_commerce_app/Screens/HomePage/home_page.dart';
 import 'package:flutter_e_commerce_app/auth/services/firebaseServices.dart';
 import 'package:flutter_e_commerce_app/Screens/login_User/login.dart';
 import 'package:flutter_e_commerce_app/Screens/ProfilePage/profile_page.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateAccount extends StatefulWidget{
 
@@ -95,13 +96,31 @@ class _CreateAccountState extends State<CreateAccount> {
                               try {
                                 final response=await _service.signUpWithEmailandPAssword(email: emailController.text.toString(), password: passwordController.text.toString());
                                 if(response!=null){
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Success")));   
+                                Fluttertoast.showToast(msg: "Success",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
                                 Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage(email: emailController.text, password: passwordController.text,uid: response,),));
                                 }else{
-                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User Already Exists")));
+                                   Fluttertoast.showToast(msg: "User Already Exists !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
                                 }
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                Fluttertoast.showToast(msg: e.toString(),
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
                                 log(e.toString());
                               }
                             }

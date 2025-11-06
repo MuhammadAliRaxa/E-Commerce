@@ -27,6 +27,7 @@ class _HomeState extends State<Home> {
   bool isElectronics = false;
   bool isBags = false;
   TextEditingController searchController = TextEditingController();
+  UserModel? user;
   @override
   void dispose() {
     searchController.dispose(); 
@@ -41,6 +42,10 @@ class _HomeState extends State<Home> {
       (timeStamp) => 
       context.read<HomeProductsBloc>().add(FetchProducts()),
     );
+    init();
+  }
+  void init() async {
+     user=await _firebaseservices.getCurrentUser();
   }
   
 
@@ -49,11 +54,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-  UserModel? user;
-  Future<void> getUser()async{
-    user=await _firebaseservices.getCurrentUser();
-  }
-
     return BlocBuilder<HomeProductsBloc, HomeProductsState>(
       bloc: context.watch<HomeProductsBloc>(),
       builder: (context, state){
@@ -80,7 +80,7 @@ class _HomeState extends State<Home> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                                 image: DecorationImage(
-                                  image: AssetImage("assets/Ali Raza.jpg"),
+                                  image:user==null?AssetImage("assets/profile.png"):NetworkImage(user!.profilePicture),
                                 ),
                               ),
                             ),
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             subtitle: Text(
-                              user==null?"Loading...":user!.name,
+                              user==null?"Loading ... ":user!.name,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -136,9 +136,10 @@ class _HomeState extends State<Home> {
                               ),
                               child: Row(
                                 children: [
+                                  Padding(padding: EdgeInsetsGeometry.all(6)),
                                   Icon(Icons.search),
-                                  Padding(padding: EdgeInsetsGeometry.all(10)),
-                                  Text("Search")
+                                  Padding(padding: EdgeInsetsGeometry.all(8)),
+                                  Text("Search",style: TextStyle(fontSize: 15),)
                                 ],
                               ),
                             )
@@ -169,7 +170,7 @@ class _HomeState extends State<Home> {
                               flex: 5,
                               child: GestureDetector(
                                 child: Text(
-                                  "See All",
+                                  "",
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
                                     fontSize: 16,
@@ -336,6 +337,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  SliverPadding(padding: EdgeInsets.all(10)),
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.only(top: 7),

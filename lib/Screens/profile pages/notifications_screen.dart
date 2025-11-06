@@ -8,7 +8,7 @@ class NotificationSettingsScreen extends StatefulWidget {
 }
 
 class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
-  // Notification settings state
+  
   bool _generalNotification = true;
   bool _sound = true;
   bool _vibrate = false;
