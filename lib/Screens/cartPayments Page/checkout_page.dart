@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_e_commerce_app/Screens/HomePage/PageViews/cart_page.dart';
-import 'package:flutter_e_commerce_app/Screens/HomePage/PageViews/home.dart';
-import 'package:flutter_e_commerce_app/Screens/HomePage/home_page.dart';
+
 import 'package:flutter_e_commerce_app/Screens/cartPayments%20Page/shippingPage.dart';
 import 'package:flutter_e_commerce_app/Screens/profile%20pages/add_new_address.dart';
 import 'package:flutter_e_commerce_app/bloc/cart_product/bloc_event.dart';
@@ -16,7 +15,6 @@ import 'package:flutter_e_commerce_app/data/models/shipping_address.dart';
 import 'package:flutter_e_commerce_app/data/repoositries/product_repositry.dart';
 import 'package:flutter_e_commerce_app/stripe_payment/payment_services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive/hive.dart';
 
 class CheckoutScreen extends StatelessWidget {
   final List<CartItem> cartItems;
@@ -55,7 +53,7 @@ Widget build(BuildContext context) {
           SizedBox(height: 24),
           _buildShippingOptions(state.address,() => Navigator.of(context).push(MaterialPageRoute(builder: (context) => ShippingOptions(),)),),
           SizedBox(height: 24),
-          _buildPromoCode(() => Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ShippingOptions(),)),),
+          
           SizedBox(height: 24),
           _buildOrderSummary(double.parse(state.address.price),0),
           SizedBox(height: 100),  
@@ -262,7 +260,7 @@ Widget build(BuildContext context) {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '\$${double.parse(item.price).toStringAsFixed(2)}',
+                '\Rs.${double.parse(item.price).toStringAsFixed(2)}',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -358,67 +356,6 @@ Widget build(BuildContext context) {
     );
   }  
 
-  Widget _buildPromoCode(VoidCallback pressed) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Promo Code',
-          style: TextStyle(
-            fontSize:  18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Discount 30% Off',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    Spacer(),
-                    GestureDetector(
-                      onTap:(){},
-                      child: Icon(Icons.close, color: Colors.white, size: 18),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(width: 12),
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                shape: BoxShape.circle,
-              ),
-              child: IconButton(
-                onPressed: () {
-
-                },
-                icon: Icon(Icons.add, color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildOrderSummary(double shipping,double? promo) {
     num a=promo??0;
     total=subtotal + shipping - a ;
@@ -468,7 +405,6 @@ Widget build(BuildContext context) {
         height: 50,
         child: ElevatedButton(
           onPressed: () async{
-            
             if(SharedpreferancesHelper.getAddress()!=null){
             try {
               String address=SharedpreferancesHelper.getAddress()!;
@@ -481,14 +417,15 @@ Widget build(BuildContext context) {
                                 gravity: ToastGravity.BOTTOM,
                                 fontSize: 16
                                 );
-            MyOrder order=MyOrder(isPending: "Ongoing", address: address, items: cartItems);
+            MyOrder order=MyOrder(saleId: '${Random().nextInt(999999)}', items: cartItems, discount: 0, totalAmount: total, paymentMethod: "Do not Know ?", status: "Pending", createdAt: DateTime.now());
             ProductRepositry productRepositry=ProductRepositry();
             await productRepositry.addProductInOder(order);
             Navigator.of(context).pop();
             context.read<CartBloc>().add(FetchCartProduct());
            }catch (e) {
             print(e.toString());
-             Fluttertoast.showToast(msg: "Payment Cancelled !",
+          
+             Fluttertoast.showToast(msg: e.toString(),
                                 toastLength: Toast.LENGTH_SHORT,
                                 backgroundColor: Colors.grey,
                                 textColor: Colors.white,

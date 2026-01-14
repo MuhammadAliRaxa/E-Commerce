@@ -89,16 +89,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   
                   const SizedBox(height: 16),
                   
-                  // Birth Date Field
-                  _buildInputField(
-                    controller: _birthDateController,
-                    hintText: 'Birth Date',
-                    suffixIcon: Icons.calendar_today_outlined,
-                    readOnly: true,
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
                   // Email Field
                   _buildInputField(
                     readOnly: true,

@@ -1,12 +1,16 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_e_commerce_app/Screens/login_User/login.dart';
 import 'package:flutter_e_commerce_app/Screens/profile%20pages/add_new_address.dart';
 import 'package:flutter_e_commerce_app/Screens/profile%20pages/edit_profile.dart';
-import 'package:flutter_e_commerce_app/Screens/profile%20pages/notifications_screen.dart';
+import 'package:flutter_e_commerce_app/Screens/profile%20pages/help_line_chat.dart';
 import 'package:flutter_e_commerce_app/Screens/profile%20pages/privacy_policy.dart';
 import 'package:flutter_e_commerce_app/auth/models/userModel.dart';
 import 'package:flutter_e_commerce_app/bloc/user%20profile/user_profile_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -20,6 +24,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     context.read<UserProfileBloc>().add(FetchUserprofileEvent());
     super.initState();
+  }
+  File? _image;
+  Future<void> getImagefromGallery({required UserModel user})async{
+    final imagePick=await ImagePicker().pickImage(source: ImageSource.gallery,imageQuality: 100,);
+    if(context.mounted){
+      if(imagePick!=null){
+        setState(() {
+        UserModel userA=UserModel(dateofBirth: user.dateofBirth,email: user.email,gender: user.gender,id: user.id,name: user.name,nickName: user.nickName,password: user.password,profilePicture: imagePick.path,phoneNumber: user.phoneNumber);
+          context.read<UserProfileBloc>().add(UpdateUserprofileEvent(user: userA));
+      _image=File(imagePick.path);
+    });
+      }else{
+        Fluttertoast.showToast(msg: "Image not selected !",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.grey,
+                                textColor: Colors.white,
+                                gravity: ToastGravity.BOTTOM,
+                                fontSize: 16
+                                );
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -71,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                      CircleAvatar(
                       radius: 50,
-                      backgroundImage: NetworkImage(
+                      backgroundImage:NetworkImage(
                         user.profilePicture,
                       ),
                     ),
@@ -84,10 +109,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: Colors.black,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                          size: 16,
+                        child: GestureDetector(
+                          onTap: () async{
+                            PermissionStatus status=await Permission.mediaLibrary.status;
+                            if(status.isGranted){
+                              await getImagefromGallery(user: user);
+                            }else if(status.isDenied){
+                              var request =await Permission.mediaLibrary.request();
+                              if (request.isGranted) {
+                                await getImagefromGallery(user: user);
+                              }
+                            }
+                          },
+                          child: const Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                         ),
                       ),
                     ),
@@ -133,20 +171,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                 ),
                 _buildMenuItem(
-                  icon: Icons.notifications_outlined,
-                  title: 'Notification',
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotificationSettingsScreen(),));
-                  },
-                ),
-                _buildMenuItem(
-                  icon: Icons.dark_mode_outlined,
-                  title: 'Dark Mode',
-                  onTap: () {
-
-                  },
-                ),
-                _buildMenuItem(
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy Policy',
                   onTap: () {
@@ -156,7 +180,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _buildMenuItem(
                   icon: Icons.help_outline,
                   title: 'Help Center',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChatScreen(),));
+                  },
                 ),
                 const SizedBox(height: 16),
                 _buildMenuItem(

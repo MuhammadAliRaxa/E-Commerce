@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Image(image: AssetImage("assets/c.png")),
             SizedBox(height: 20,),
-            WordCarousel(containerColor: Colors.transparent,fixedText: "", rotatingWords: ["ecom"],stayDuration: Duration(milliseconds: 1200),),
+            WordCarousel(containerColor: const Color.fromARGB(0, 190, 180, 180),fixedText: "Smart", rotatingWords: ["Basket"],stayDuration: Duration(milliseconds: 1200),),
             SizedBox(height: 300,),
             SpinKitFadingCircle(itemBuilder: (context, index) => DecoratedBox(decoration: BoxDecoration(
               color: Colors.black
