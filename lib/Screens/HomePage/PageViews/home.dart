@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,11 +7,13 @@ import 'package:flutter_e_commerce_app/auth/services/firebaseServices.dart';
 import 'package:flutter_e_commerce_app/bloc/home_products/home_products_bloc.dart';
 import 'package:flutter_e_commerce_app/data/models/product.dart';
 import 'package:flutter_e_commerce_app/data/repoositries/product_repositry.dart';
+import 'package:flutter_e_commerce_app/main.dart';
 import 'package:flutter_e_commerce_app/widget/Catgories.dart';
 import 'package:flutter_e_commerce_app/widget/Imageslider.dart';
 import 'package:flutter_e_commerce_app/widget/products_view.dart';
 import 'package:flutter_e_commerce_app/widget/products.dart';
 import 'package:flutter_e_commerce_app/widget/search.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class Home extends StatefulWidget {
@@ -21,6 +24,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<Product>? wishlistProduct;
   bool isAll = true;
   bool isShoes = false;
   bool isClothes = false;
@@ -102,10 +106,11 @@ class _HomeState extends State<Home> {
                             trailing: IconButton(
                               onPressed: ()async {
                                 var list=await _repo.getAllProducts();
+                                var wishlist=await _repo.favouriteProducts(list);
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder:
-                                        (context) => ProductsView(name: "My WishList", products:list,
+                                        (context) => ProductsView(name: "My WishList", products: wishlist,
                                         ),
                                   ),
                                 );
@@ -126,7 +131,9 @@ class _HomeState extends State<Home> {
                           child: GestureDetector(
                             onTap: () async{
                               var list=await _repo.getAllProducts();
-                              Navigator.push(context,MaterialPageRoute(builder: (context) => SearchField(list: list),));
+                              if(mounted){
+                                Navigator.push(context,MaterialPageRoute(builder: (context) => SearchField(list: list),));
+                              }
                             },
                             child: Container(
                               height: 50,

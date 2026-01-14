@@ -23,7 +23,6 @@ class _AddNewAddressScreenState extends State<AddNewAddressScreen> {
   final Completer<GoogleMapController> _controller = Completer<GoogleMapController>();
   LatLng? _currentPosition;
   Set<Marker> _markers = {};
-  var box=Hive.box('address');
 
   static const CameraPosition _kInitialPosition = CameraPosition(
     target: LatLng(42.240593, -83.269311),

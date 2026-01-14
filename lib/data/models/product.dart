@@ -3,6 +3,7 @@ class Product {
   String name;
   String image;
   String price;
+  String? description;
   double rating;
   bool isFavourite;
   bool? isShoes;
@@ -14,6 +15,7 @@ class Product {
     required this.name,
     required this.image,
     required this.price,
+    this.description,
     required this.rating,
     required this.isFavourite,
     this.isShoes,
@@ -21,13 +23,13 @@ class Product {
     this.isBags,
     this.isElectronics,
   });
-  
 
   Product copyWith({
     int? id,
     String? name,
     String? image,
     String? price,
+    String? description,
     double? rating,
     bool? isFavourite,
     bool? isShoes,
@@ -40,6 +42,7 @@ class Product {
       name: name ?? this.name,
       image: image ?? this.image,
       price: price ?? this.price,
+      description: description ?? this.description,
       rating: rating ?? this.rating,
       isFavourite: isFavourite ?? this.isFavourite,
       isShoes: isShoes ?? this.isShoes,
@@ -55,6 +58,7 @@ class Product {
       name: json['name'],
       image: json['image'],
       price: json['price'],
+      description: json['description'],
       rating: json['rating'],
       isFavourite: json['isFavourite'],
       isShoes: json['isShoes'],
@@ -70,6 +74,7 @@ class Product {
       'name': name,
       'image': image,
       'price': price,
+      'description': description,
       'rating': rating,
       'isFavourite': isFavourite,
       'isShoes': isShoes,
@@ -81,7 +86,7 @@ class Product {
 
   @override
   String toString() {
-    return '''Product(id: $id, name: $name, image: $image, price: $price, rating: $rating, isFavourite: $isFavourite, isShoes: $isShoes, isClothes: $isClothes, isBags: $isBags, isElectronics: $isElectronics)''';
+    return '''Product(id: $id, name: $name, image: $image, price: $price, description: $description, rating: $rating, isFavourite: $isFavourite, isShoes: $isShoes, isClothes: $isClothes, isBags: $isBags, isElectronics: $isElectronics)''';
   }
 
   @override
@@ -93,6 +98,7 @@ class Product {
       other.name == name &&
       other.image == image &&
       other.price == price &&
+      other.description == description &&
       other.rating == rating &&
       other.isFavourite == isFavourite &&
       other.isShoes == isShoes &&
@@ -107,6 +113,7 @@ class Product {
       name.hashCode ^
       image.hashCode ^
       price.hashCode ^
+      description.hashCode ^
       rating.hashCode ^
       isFavourite.hashCode ^
       isShoes.hashCode ^
