@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_e_commerce_app/bloc/order%20bloc/order_bloc_bloc.dart';
 import 'package:flutter_e_commerce_app/data/models/cart_product.dart';
-import 'package:flutter_e_commerce_app/data/models/order_item.dart';
 
 class MyOrdersScreen extends StatefulWidget {
   const MyOrdersScreen({Key? key}) : super(key: key);

@@ -72,13 +72,13 @@ class _ProfilePageState extends State<ProfilePage> {
           child: IntrinsicHeight(
             child: Padding(
               padding: EdgeInsets.all(15),
-              child: Column(
+              child: Column(  
                 children: [
                   Expanded(
                     flex: 3,
                     child: Center(
                       child: GestureDetector(
-                        onTap: () {
+                        onTap: (){
                           getImagefromGallery();
                         },
                         child: CircleAvatar(

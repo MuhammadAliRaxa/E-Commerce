@@ -117,7 +117,7 @@ class ProductDetails extends StatelessWidget {
                             child: SlideAnimation(
                               verticalOffset: 100,
                               child: FadeInAnimation(
-                                child: Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+                                child: Text(product.description??"Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
                                 style: TextStyle(fontSize: 13),),
                               ),
                             ),

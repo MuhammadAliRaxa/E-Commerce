@@ -7,7 +7,7 @@ import 'package:flutter_e_commerce_app/data/models/my_order.dart';
 import '../models/product.dart';
 
 class ProductSourceData {
-  Firebaseservices _firebaseservices=Firebaseservices();
+  final Firebaseservices _firebaseservices=Firebaseservices();
   final db = FirebaseFirestore.instance;
   static String orderCollection="order";
   static String customersCollection="customers";
@@ -85,31 +85,18 @@ class ProductSourceData {
       throw Exception(e.toString());
     }
   }
-  // Future<List<CartItem>> onGoingOrders() async{
-  // List<CartItem> items=[];
-  //   var list =await getAllOrderProducts();
-  //   for (var i = 0; i < list.length; i++) {
-  //     if(list[i].isPending=="Ongoing"){
-  //       items.addAll(list[i].items);
-  //       print(items);
-  //     }
-  //   }
-  //   return items;
-  // }
   Future<List<CartItem>> OnGoingOrders() async{
     List<CartItem> order=[];
-  List<String> data=[];
   UserModel? user=await _firebaseservices.getCurrentUser();
     if(user==null){
       throw Exception("User is Not Authenticated");
     }
     var items =await db
-    .collection(customersCollection)
-    .doc(user.id)
     .collection(orderCollection)
+    .where("customerId",isEqualTo: user.id)
     .get();
     items.docs.forEach((element){
-       if(element.data()["isPending"]=="Ongoing"){
+       if(element.data()["status"]=="Pending"){
          List<dynamic> items=element.data()['items'];
          order.addAll(items.map((e) => CartItem.fromJson(e,user.id),).toList());
        }
@@ -118,18 +105,16 @@ class ProductSourceData {
   }
   Future<List<CartItem>> completedOrders() async{
     List<CartItem> order=[];
-  List<String> data=[];
   UserModel? user=await _firebaseservices.getCurrentUser();
     if(user==null){
       throw Exception("User is Not Authenticated");
     }
     var items =await db
-    .collection(customersCollection)
-    .doc(user.id)
     .collection(orderCollection)
+    .where("customerId",isEqualTo: user.id)
     .get();
     items.docs.forEach((element){
-       if(element.data()["isPending"]=="completed"){
+       if(element.data()["status"]=="completed"){
          List<dynamic> items=element.data()['items'];
          order.addAll(items.map((e) => CartItem.fromJson(e,user.id),).toList());
        }

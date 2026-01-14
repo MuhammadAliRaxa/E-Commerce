@@ -15,9 +15,7 @@ class OrderBlocBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
 
   OrderBlocBloc() : super(OrderBlocInitial()) {
     
-    // Handle fetching ongoing orders
     on<FetchOrderEvent>((event, emit) async {
-      // Don't show loading if we already have some data
       if (_ongoingOrders.isEmpty && _completedOrders.isEmpty) {
         emit(OrderLoadingState());
       }
@@ -33,9 +31,7 @@ class OrderBlocBloc extends Bloc<OrderBlocEvent, OrderBlocState> {
       }
     });
 
-    // Handle fetching completed orders
     on<FetchCompletedOrderEvent>((event, emit) async {
-      // Don't show loading if we already have some data
       if (_ongoingOrders.isEmpty && _completedOrders.isEmpty) {
         emit(OrderLoadingState());
       }

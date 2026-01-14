@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_e_commerce_app/Configs/sharedPreferances.dart';
@@ -53,10 +52,6 @@ class Firebaseservices {
       throw Exception(e.message);
     }
   }
-
-  
-
-
 
   Future<UserModel?> createUserProfile( 
     {
@@ -129,9 +124,9 @@ class Firebaseservices {
     .collection(cartCollection)
     .doc(id)
     .set(product.toJson());
-    return "done";
+    return "Done";
     }else{
-      return "Already";
+      return "Already in Cart";
     }
   }
 
@@ -172,7 +167,8 @@ class Firebaseservices {
       throw Exception("User is Not Authenticated");
     }
     try {
-      SharedpreferancesHelper.setAccountAlreadyLogin(false);
+      await SharedpreferancesHelper.setAccountAlreadyLogin(false);
+      final user=await getCurrentUser();
       await _googleSignIn.signOut();
       await _auth.signOut();
     return true;
@@ -190,14 +186,15 @@ class Firebaseservices {
     if(user==null){
       throw Exception("User is Not Authenticated");
     }
+    print(user.id);
     var items =await _firestore
-    .collection(customersCollection)
-    .doc(user.id)
     .collection(orderCollection)
+    .where("customerId",isEqualTo: user.id)
     .get();
     items.docs.forEach((element){ List<dynamic> items=element.data()['items'];
     list.addAll(items.map((e) => CartItem.fromJson(e,user.id),).toList());
     });
+    print(list);
     return list;
     }catch(e){
       throw Exception(e.toString());
@@ -209,11 +206,9 @@ class Firebaseservices {
     if(user==null){
       return "Not Authenticated";
     }
+    order.customerId=user.id;
     await deleteCollection(cartCollection);
-    var data =await _firestore
-    .collection(customersCollection)
-    .doc(user.id)
-    .collection(orderCollection)
+    await _firestore.collection(orderCollection)
     .add(order.toJson());
     return "done";
   }
@@ -223,7 +218,7 @@ class Firebaseservices {
     if (!_initialized) {
       await _googleSignIn.initialize(
         clientId:
-            "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com", // <-- your web client ID
+            "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
         serverClientId:
             "315386810591-g6enhchj2jl4d2p8pav2er9ps23qpth7.apps.googleusercontent.com",
       );
@@ -287,9 +282,9 @@ class Firebaseservices {
             'email': user.email ?? '',
             'profilePicture': user.photoURL ?? '',
             'phoneNumber': user.phoneNumber ??'',
-            'gender': '',
+            'gender': "",
             'dateofBirth': "",
-            'password': "",
+            'password': " ",
             'nickName': user.displayName??'',
           });
         }
@@ -343,6 +338,8 @@ class Firebaseservices {
     
     Future<bool> updateUser(UserModel user)async{
       try {
+    File file=File(user.profilePicture);
+    String _image=await uploadProfileImage(user.id,file);
     UserModel? a=await getCurrentUser();
     if(a==null){
       throw Exception("User is not authorized");
@@ -350,7 +347,19 @@ class Firebaseservices {
     await _firestore
     .collection(customersCollection)
     .doc(user.id)
-    .update(user.toJson());
+    .update(
+      {
+            'email':user.email,
+            'name':user.name,
+            'nickName':user.nickName,
+            'id':user.id,
+            'phoneNumber':user.phoneNumber,
+            'gender':user.gender,
+            'dateofBirth':user.dateofBirth,
+            'profilePicture':_image??"",
+            'password':user.password
+      }
+    );
     return true;
       } catch (e) {
         throw Exception(e.toString());
